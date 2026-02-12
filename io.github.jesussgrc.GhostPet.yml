@@ -1,0 +1,38 @@
+app-id: io.github.jesussgrc.GhostPet
+runtime: org.freedesktop.Platform
+runtime-version: '24.08'
+sdk: org.freedesktop.Sdk
+command: ghost-pet
+
+finish-args:
+  - --socket=x11
+  - --share=ipc
+  - --device=dri
+
+modules:
+  - name: python3-pyqt5
+    buildsystem: simple
+    build-commands:
+      - pip3 install --verbose --exists-action=i --no-index --find-links="file://${PWD}"
+        --prefix=${FLATPAK_DEST} --no-build-isolation PyQt5
+    sources:
+      - type: file
+        url: https://files.pythonhosted.org/packages/b4/8c/4065950f9d013c4b2e588fe33cf04e564c2322842d84dbcbce5ba1dc28b0/PyQt5-5.15.11-cp38-abi3-manylinux_2_17_x86_64.whl
+        sha256: cd672a6738d1ae33ef7d9efa8e6cb0a1525ecf53ec86da80a9e1b6ec38c8d0f1
+      - type: file
+        url: https://files.pythonhosted.org/packages/9a/46/ffe177f99f897a59dc237a20059020427bd2d3853d713992b8081933ddfe/pyqt5_qt5-5.15.18-py3-none-manylinux2014_x86_64.whl
+        sha256: bf2457e6371969736b4f660a0c153258fa03dbc6a181348218e6f05421682af7
+      - type: file
+        url: https://files.pythonhosted.org/packages/19/bf/8f3efa10ddd3e76c1253865340ab7c2960ef96681d732b1f666c77430612/pyqt5_sip-12.18.0-cp312-cp312-manylinux1_x86_64.manylinux_2_5_x86_64.whl
+        sha256: 163c2bba5e637c2222ec17d82a2c5aa158184a191923eb7d137cf4cfa0399529
+
+  - name: ghost-pet
+    buildsystem: simple
+    build-commands:
+      - install -Dm755 ghost_pet.py /app/bin/ghost-pet
+      - install -Dm644 io.github.jesussgrc.GhostPet.desktop /app/share/applications/io.github.jesussgrc.GhostPet.desktop
+      - install -Dm644 io.github.jesussgrc.GhostPet.metainfo.xml /app/share/metainfo/io.github.jesussgrc.GhostPet.metainfo.xml
+      - install -Dm644 icons/io.github.jesussgrc.GhostPet.svg /app/share/icons/hicolor/scalable/apps/io.github.jesussgrc.GhostPet.svg
+    sources:
+      - type: dir
+        path: .

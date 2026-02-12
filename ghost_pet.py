@@ -4,6 +4,7 @@ Cute Ghost Desktop Pet
 A friendly ghost that floats around your desktop and says cute things!
 """
 
+import argparse
 import os
 os.environ["QT_QPA_PLATFORM"] = "xcb"
 
@@ -102,7 +103,7 @@ class GhostPet(QWidget):
         "Ghouls just wanna have fun!",
     ]
 
-    def __init__(self):
+    def __init__(self, monitor_filter=None):
         super().__init__()
 
         # Base flags (behind other windows)
@@ -153,24 +154,22 @@ class GhostPet(QWidget):
         self.target_y = 0
         self.moving = False
 
-        # Get bounding box of Samsung screens only
-        samsung_rects = []
+        # Get bounding box of screens (optionally filtered by manufacturer)
+        rects = []
         for screen in QApplication.screens():
-            if "Samsung" in screen.manufacturer():
-                samsung_rects.append(screen.geometry())
+            if monitor_filter and monitor_filter.lower() not in screen.manufacturer().lower():
+                continue
+            rects.append(screen.geometry())
 
-        if samsung_rects:
-            self.bounds_x = min(r.x() for r in samsung_rects)
-            self.bounds_y = min(r.y() for r in samsung_rects)
-            self.bounds_right = max(r.x() + r.width() for r in samsung_rects)
-            self.bounds_bottom = max(r.y() + r.height() for r in samsung_rects)
-        else:
+        if not rects:
             # Fallback to primary screen
             screen = QApplication.primaryScreen().geometry()
-            self.bounds_x = screen.x()
-            self.bounds_y = screen.y()
-            self.bounds_right = screen.x() + screen.width()
-            self.bounds_bottom = screen.y() + screen.height()
+            rects.append(screen)
+
+        self.bounds_x = min(r.x() for r in rects)
+        self.bounds_y = min(r.y() for r in rects)
+        self.bounds_right = max(r.x() + r.width() for r in rects)
+        self.bounds_bottom = max(r.y() + r.height() for r in rects)
 
         # current_x/y = ghost body center on screen
         self.current_x = (self.bounds_x + self.bounds_right) // 2
@@ -445,10 +444,18 @@ class GhostPet(QWidget):
 
 
 def main():
-    app = QApplication(sys.argv)
+    parser = argparse.ArgumentParser(description="Cute Ghost Desktop Pet")
+    parser.add_argument(
+        "--monitors", metavar="MANUFACTURER",
+        help="only use monitors matching this manufacturer substring "
+             "(e.g. --monitors Samsung). Default: all monitors.",
+    )
+    args, remaining = parser.parse_known_args()
+
+    app = QApplication(remaining)
     app.setQuitOnLastWindowClosed(False)
 
-    ghost = GhostPet()
+    ghost = GhostPet(monitor_filter=args.monitors)
     ghost.show()
 
     sys.exit(app.exec_())

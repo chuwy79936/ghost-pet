@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Ghost Pet
+Comment=A cute ghost desktop pet that floats around your screen
+Exec=ghost-pet
+Icon=io.github.jesussgrc.GhostPet
+Terminal=false
+Type=Application
+Categories=Utility;

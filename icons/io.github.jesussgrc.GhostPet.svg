@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- Ghost body -->
+  <path d="M30 110 Q25 65 30 35 Q35 10 64 8 Q93 10 98 35 Q103 65 98 110
+           Q90 122 83 110 Q76 98 64 115 Q52 130 45 110 Q38 95 30 110 Z"
+        fill="white" stroke="#B4B4C8" stroke-width="2"/>
+  <!-- Shadow -->
+  <ellipse cx="64" cy="120" rx="30" ry="5" fill="#00000020"/>
+  <!-- Left eye -->
+  <ellipse cx="48" cy="52" rx="8" ry="11" fill="#282828"/>
+  <!-- Right eye -->
+  <ellipse cx="80" cy="52" rx="8" ry="11" fill="#282828"/>
+  <!-- Left eye shine -->
+  <ellipse cx="50" cy="48" rx="3" ry="3" fill="white"/>
+  <!-- Right eye shine -->
+  <ellipse cx="82" cy="48" rx="3" ry="3" fill="white"/>
+  <!-- Left blush -->
+  <ellipse cx="38" cy="65" rx="9" ry="6" fill="#FFB4B4" opacity="0.4"/>
+  <!-- Right blush -->
+  <ellipse cx="90" cy="65" rx="9" ry="6" fill="#FFB4B4" opacity="0.4"/>
+  <!-- Mouth -->
+  <path d="M58 78 Q64 84 70 78" fill="none" stroke="#505050" stroke-width="2" stroke-linecap="round"/>
+</svg>
