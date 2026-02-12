@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Ghost Pet
+Comment=A cute ghost desktop pet
+Exec=python3 /home/ivan/desktop-pet/ghost_pet.py
+Icon=face-smile
+Terminal=false
+Type=Application
+Categories=Utility;
