@@ -106,24 +106,17 @@ class GhostPet(QWidget):
     def __init__(self, monitor_filter=None):
         super().__init__()
 
-        # Base flags (behind other windows)
-        self._base_flags = (
-            Qt.FramelessWindowHint |
-            Qt.Tool |
-            Qt.WindowTransparentForInput
-        )
-        # Scare flags (on top of everything)
-        self._top_flags = (
-            Qt.FramelessWindowHint |
-            Qt.WindowStaysOnTopHint |
-            Qt.Tool |
-            Qt.WindowTransparentForInput
-        )
-
         self._scare_active = False
 
-        # Start in background mode
-        self.setWindowFlags(self._base_flags)
+        # Single set of flags — never swap at runtime (XWayland leaks
+        # native windows when setWindowFlags() recreates them).
+        # No WindowStaysOnTopHint — ghost stays behind other windows.
+        # Scares use raise_()/lower() to temporarily pop on top.
+        self.setWindowFlags(
+            Qt.FramelessWindowHint |
+            Qt.Tool |
+            Qt.WindowTransparentForInput
+        )
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.setAttribute(Qt.WA_ShowWithoutActivating)
 
@@ -249,7 +242,6 @@ class GhostPet(QWidget):
                     math.sin(t * 0.7 + p[1]) * 0.25 +
                     math.sin(t * 1.1 + p[2]) * 0.15)
             self._opacity = max(0.08, min(1.0, 0.55 + wave))
-            self.setWindowOpacity(self._opacity)
 
         self._update_widget_pos()
         self.update()
@@ -294,20 +286,16 @@ class GhostPet(QWidget):
         delay = random.randint(5 * 60 * 1000, 10 * 60 * 1000)  # 5-10 minutes
         self._scare_timer.start(delay)
 
-    def _apply_flags(self, flags):
-        self.setWindowFlags(flags)
-        self.setAttribute(Qt.WA_TranslucentBackground)
-        self.setAttribute(Qt.WA_ShowWithoutActivating)
-        self.show()
-
     def _start_scare(self):
         self._scare_active = True
         self._scare_start = time.time()
         self._scare_duration = 5.0  # total seconds
 
-        # Start fully transparent, pop to top
-        self.setWindowOpacity(0.0)
-        self._apply_flags(self._top_flags)
+        # Pop to front of all windows
+        self.raise_()
+
+        # Start fully transparent then fade in
+        self._opacity = 0.0
 
         # Say a scare phrase
         phrase = random.choice(self.SCARE_PHRASES)
@@ -323,13 +311,12 @@ class GhostPet(QWidget):
         t = elapsed / self._scare_duration  # 0.0 → 1.0
 
         if t >= 1.0:
-            # Done — fade complete, sink back
+            # Done — fade complete, sink back behind windows
             self._scare_tick_timer.stop()
             self._scare_tick_timer.deleteLater()
-            self.setWindowOpacity(0.0)
-            self._apply_flags(self._base_flags)
             self._scare_active = False
             self._dismiss_bubble()
+            self.lower()
             self._schedule_next_scare()
             return
 
@@ -341,13 +328,14 @@ class GhostPet(QWidget):
         else:
             opacity = 1.0 - (t - 0.7) / 0.3   # 1 → 0
 
-        self.setWindowOpacity(opacity)
+        self._opacity = opacity
 
     # ── drawing ──────────────────────────────────────────────────
 
     def paintEvent(self, event):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)
+        painter.setOpacity(self._opacity)
 
         # --- Speech bubble (drawn first, ghost overlaps slightly) ---
         if self._bubble_active:

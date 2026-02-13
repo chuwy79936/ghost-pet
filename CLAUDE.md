@@ -22,7 +22,7 @@ python3 ghost_pet.py &
 
 ## Features
 - Transparent floating ghost with cute design (blush, shiny eyes, drop shadow)
-- Continuously drifts across Samsung monitors only (filtered by `screen.manufacturer()`)
+- Continuously drifts across all monitors (optionally filtered with `--monitors MANUFACTURER`)
 - Gentle bobbing float animation
 - Organic opacity phasing — layered sine waves fade the ghost in and out like a real ghost
 - Speech bubbles with 47 shuffled phrases (ghost puns, encouragement) every ~15 seconds
@@ -30,20 +30,18 @@ python3 ghost_pet.py &
 - Click-through at all times (mouse events pass to windows underneath)
 - Never steals focus or appears in taskbar
 
-## Monitor Restriction
-The ghost is restricted to Samsung monitors only. It finds screens where `screen.manufacturer()` contains "Samsung" and computes a bounding box. Falls back to the primary screen if no Samsung monitors are found.
+## Monitor Filter
+Uses all monitors by default. Pass `--monitors Samsung` (or any manufacturer substring) to restrict. Falls back to the primary screen if no monitors match.
 
 ## Window Flags
-### Normal mode (behind windows)
 - `Qt.FramelessWindowHint` - No window decorations
+- `Qt.WindowStaysOnTopHint` - Always on top (scare effect uses opacity only)
 - `Qt.Tool` - Doesn't appear in taskbar
 - `Qt.WindowTransparentForInput` - Click-through
 - `Qt.WA_TranslucentBackground` - Transparent background
 - `Qt.WA_ShowWithoutActivating` - Doesn't steal focus
 
-### Scare mode (on top of everything)
-- Same as above, plus `Qt.WindowStaysOnTopHint`
-- Flags are swapped dynamically via `setWindowFlags()` + `show()`
+**Important**: Flags are set once at startup and never swapped. Calling `setWindowFlags()` at runtime on XWayland leaks native X11 windows (creates duplicates).
 
 ## Architecture
 - Single widget draws both ghost body and speech bubble in one `paintEvent` — eliminates z-order issues between bubble and ghost
