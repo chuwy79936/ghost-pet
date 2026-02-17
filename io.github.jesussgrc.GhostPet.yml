@@ -30,6 +30,7 @@ modules:
     buildsystem: simple
     build-commands:
       - install -Dm755 ghost_pet.py /app/bin/ghost-pet
+      - install -Dm644 settings_dialog.py /app/lib/ghost-pet/settings_dialog.py
       - install -Dm644 io.github.jesussgrc.GhostPet.desktop /app/share/applications/io.github.jesussgrc.GhostPet.desktop
       - install -Dm644 io.github.jesussgrc.GhostPet.metainfo.xml /app/share/metainfo/io.github.jesussgrc.GhostPet.metainfo.xml
       - install -Dm644 icons/io.github.jesussgrc.GhostPet.svg /app/share/icons/hicolor/scalable/apps/io.github.jesussgrc.GhostPet.svg
