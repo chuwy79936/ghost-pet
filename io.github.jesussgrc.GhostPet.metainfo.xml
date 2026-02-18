@@ -14,9 +14,14 @@
     </p>
   </description>
   <launchable type="desktop-id">io.github.jesussgrc.GhostPet.desktop</launchable>
-  <url type="homepage">https://github.com/jesussgrc/ghost-pet</url>
+  <url type="homepage">https://github.com/chuwy79936/ghost-pet</url>
   <content_rating type="oars-1.1" />
   <releases>
+    <release version="1.2.0" date="2026-02-17">
+      <description>
+        <p>Settings dialog, system tray icon, eye/mouth/arm animations, speech bubble readability fix, ghost scaling, and custom phrases support.</p>
+      </description>
+    </release>
     <release version="1.1.0" date="2026-02-12">
       <description>
         <p>Ghost now stays behind windows and pops to front during scare animations. Added --monitors flag to filter by manufacturer. Opacity driven via painter for smoother rendering.</p>
